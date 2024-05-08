@@ -7,7 +7,7 @@
 #include <moveit_msgs/msg/collision_object.hpp>
 
 #include <memory>
-#include <std_srvs/srv/trigger.hpp>
+#include <std_srvs/srv/set_bool.hpp>
 
 namespace uclv
 {
@@ -16,7 +16,7 @@ class SceneBuilderNode : public rclcpp::Node
 private:
   std::unique_ptr<moveit::planning_interface::PlanningSceneInterface> planning_scene_interface_;
   std::unique_ptr<moveit::planning_interface::MoveGroupInterface> move_group_interface_;
-  rclcpp::Service<std_srvs::srv::Trigger>::SharedPtr service_builder_;
+  rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr service_builder_;
 
   rclcpp::TimerBase::SharedPtr start_timer_;
 
@@ -39,7 +39,7 @@ public:
 
     using std::placeholders::_1;
     using std::placeholders::_2;
-    service_builder_ = this->create_service<std_srvs::srv::Trigger>(
+    service_builder_ = this->create_service<std_srvs::srv::SetBool>(
         "build_scene", std::bind(&SceneBuilderNode::build_scene_srv_cb, this, _1, _2));
 
     RCLCPP_INFO(this->get_logger(), "Ready to add build the scene.");
@@ -73,7 +73,7 @@ public:
 
     planning_scene_interface_->applyCollisionObject(collision_object);
 
-    // this->get_clock()->sleep_for(rclcpp::Duration::from_seconds(1.0));
+    this->get_clock()->sleep_for(rclcpp::Duration::from_seconds(0.5));
   }
 
   void clearScene()
@@ -94,7 +94,7 @@ public:
     this->get_clock()->sleep_for(rclcpp::Duration::from_seconds(1.0));
   }
 
-  void buildScene()
+  void buildScene(bool create_object_to_grasp = true)
   {
     clearScene();
 
@@ -163,20 +163,8 @@ public:
       addBOX(Table_DY, Table_DX, DZ_3, pose, "obst_5");
     }
 
-    // // TCP
-    // {
-    //   geometry_msgs::msg::PoseStamped pose;
-    //   pose.header.frame_id = "panda_hand";
-    //   pose.pose.orientation.w = 1.0;
-    //   pose.pose.position.x = 0.0;
-    //   pose.pose.position.y = 0.0;
-    //   pose.pose.position.z = 0.095;
-    //   addBOX(0.001, 0.001, 0.001, pose, "panda_hand_tcp", -pose.pose.position.z/2.0);
-    //   move_group_interface_->attachObject("panda_hand_tcp", "panda_hand",
-    //                                       { "panda_hand", "panda_rightfinger", "panda_leftfinger" });
-    // }
-
     // Object to attach
+    if (create_object_to_grasp)
     {
       geometry_msgs::msg::PoseStamped pose;
       pose.header.frame_id = "world";
@@ -188,11 +176,10 @@ public:
     }
   }
 
-  void build_scene_srv_cb(const std::shared_ptr<std_srvs::srv::Trigger::Request> request,
-                          std::shared_ptr<std_srvs::srv::Trigger::Response> response)
+  void build_scene_srv_cb(const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+                          std::shared_ptr<std_srvs::srv::SetBool::Response> response)
   {
-    (void)request;
-    buildScene();
+    buildScene(request->data);
     response->message = "OK";
     response->success = true;
   }
