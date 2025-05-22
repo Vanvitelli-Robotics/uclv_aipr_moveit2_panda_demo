@@ -1,7 +1,7 @@
 #include <rclcpp/rclcpp.hpp>
 
-#include <moveit/move_group_interface/move_group_interface.h>
-#include <moveit/planning_scene_interface/planning_scene_interface.h>
+#include <moveit/move_group_interface/move_group_interface.hpp>
+#include <moveit/planning_scene_interface/planning_scene_interface.hpp>
 #include <control_msgs/action/gripper_command.hpp>
 
 #include <Eigen/Dense>
@@ -84,12 +84,10 @@ int main(int argc, char* argv[])
 
   moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
 
-  const moveit::core::JointModelGroup* joint_model_group =
-      move_group_interface.getCurrentState()->getJointModelGroup(PLANNING_GROUP);
-
   /* Scelgo il planner da usare */
-  move_group_interface.setPlanningTime(30);
-  move_group_interface.setPlannerId("RRTstarkConfigDefault");
+  move_group_interface.setPlanningTime(120);
+  // move_group_interface.setPlannerId("RRTstarkConfigDefault");
+  move_group_interface.setPlannerId("RRTConnectkConfigDefault");
   // move_group_interface.setPlannerId("RRTConnectkConfigDefault");
   // move_group_interface.setPlannerId("PRMstarkConfigDefault");
 
@@ -100,13 +98,13 @@ int main(int argc, char* argv[])
   double y1 = 0.60;
   double DX_0 = 0.2;
   double Dy_f = 0.25;
-  double Table_DX = 0.5;
-  double Table_DY = 1.0;
+  // double Table_DX = 0.5;
+  // double Table_DY = 1.0;
   double Table_DZ = 0.4;
-  double DX = 0.5;
-  double DX_2 = 0.25;
-  double DZ_2 = 0.5;
-  double DZ_3 = 0.25;
+  // double DX = 0.5;
+  // double DX_2 = 0.25;
+  // double DZ_2 = 0.5;
+  // double DZ_3 = 0.25;
   double Dz_grasp = 0.2;
 
   gripper_open(node);
@@ -136,7 +134,7 @@ int main(int argc, char* argv[])
     move_group_interface.setStartStateToCurrentState();
     move_group_interface.setPoseTarget(pose, EE_LINK);
     moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-    bool success = (move_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    bool success = (move_group_interface.plan(my_plan) == moveit::core::MoveItErrorCode::SUCCESS);
     RCLCPP_INFO_STREAM(node->get_logger(), "plan " << (success ? "" : "FAILED"));
     if (success)
     {
@@ -212,7 +210,7 @@ int main(int argc, char* argv[])
 
     move_group_interface.setPoseTarget(pose, EE_LINK);
     moveit::planning_interface::MoveGroupInterface::Plan my_plan;
-    bool success = (move_group_interface.plan(my_plan) == moveit::planning_interface::MoveItErrorCode::SUCCESS);
+    bool success = (move_group_interface.plan(my_plan) == moveit::core::MoveItErrorCode::SUCCESS);
     RCLCPP_INFO_STREAM(node->get_logger(), "plan " << (success ? "" : "FAILED"));
     if (success)
     {
@@ -234,7 +232,6 @@ int main(int argc, char* argv[])
   rclcpp::shutdown();
   // We need to join the spinner thread!
   spinner.join();
-  return 0;
 
   return 0;
 }
