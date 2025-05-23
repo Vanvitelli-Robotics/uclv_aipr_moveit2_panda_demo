@@ -98,7 +98,7 @@ public:
   {
     clearScene();
 
-    // COSTRUISCO LA SCENA
+    // COSTRUISCO LA SCENA [HARD CODED!]
 
     double x1 = 0.5;
     double y1 = 0.60;
@@ -111,6 +111,7 @@ public:
     double DX_2 = 0.25;
     double DZ_2 = 0.5;
     double DZ_3 = 0.25;
+    double eps_clearance = 0.0001;
 
     // box 1
     {
@@ -171,7 +172,7 @@ public:
       pose.pose.orientation.w = 1.0;
       pose.pose.position.x = x1 + DX_0;
       pose.pose.position.y = 0.0;
-      pose.pose.position.z = Table_DZ;
+      pose.pose.position.z = Table_DZ + eps_clearance;
       addBOX(0.02, 0.02, 0.22, pose, "attach_obj");
     }
   }

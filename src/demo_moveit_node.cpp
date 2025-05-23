@@ -88,7 +88,6 @@ int main(int argc, char* argv[])
   move_group_interface.setPlanningTime(120);
   // move_group_interface.setPlannerId("RRTstarkConfigDefault");
   move_group_interface.setPlannerId("RRTConnectkConfigDefault");
-  // move_group_interface.setPlannerId("RRTConnectkConfigDefault");
   // move_group_interface.setPlannerId("PRMstarkConfigDefault");
 
   char ans;
@@ -106,6 +105,7 @@ int main(int argc, char* argv[])
   // double DZ_2 = 0.5;
   // double DZ_3 = 0.25;
   double Dz_grasp = 0.2;
+  double eps_clearance = 0.0001;
 
   gripper_open(node);
   // PLAN GRASP
@@ -181,17 +181,18 @@ int main(int argc, char* argv[])
     moveit_msgs::msg::OrientationConstraint ocm;
     ocm.link_name = EE_LINK;
     ocm.header.frame_id = WORLD_FRAME;
+    // ocm.header.frame_id = move_group_interface.getPoseReferenceFrame();
     ocm.orientation.x = q.x();
     ocm.orientation.y = q.y();
     ocm.orientation.z = q.z();
     ocm.orientation.w = q.w();
-    ocm.absolute_x_axis_tolerance = 2.0 * M_PI;
-    ocm.absolute_y_axis_tolerance = 2.0 * M_PI / 180.0;
+    ocm.absolute_x_axis_tolerance = 20.0 * M_PI;
+    ocm.absolute_y_axis_tolerance = 20.0 * M_PI / 180.0;
     ocm.absolute_z_axis_tolerance = 2.0 * M_PI / 180.0;
     ocm.weight = 1.0;
     moveit_msgs::msg::Constraints test_constraints;
     test_constraints.orientation_constraints.push_back(ocm);
-    // move_group_interface.setPlanningTime(60);
+    // move_group_interface.setPlanningTime(200);
     // move_group_interface.setPathConstraints(test_constraints); // <-- uncomment for orientation constraint
 
     move_group_interface.setStartStateToCurrentState();  //<-- it is usefull to update the start state to the current
@@ -204,7 +205,7 @@ int main(int argc, char* argv[])
     pose.pose.orientation.w = q.w();
     pose.pose.position.x = 0.0;
     pose.pose.position.y = y1 + Dy_f;
-    pose.pose.position.z = Table_DZ + Dz_grasp;
+    pose.pose.position.z = Table_DZ + Dz_grasp + eps_clearance;
 
     RCLCPP_INFO_STREAM(node->get_logger(), "Plan target:\n" << geometry_msgs::msg::to_yaml(pose));
 
