@@ -85,10 +85,11 @@ int main(int argc, char* argv[])
   moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
 
   /* Scelgo il planner da usare */
-  move_group_interface.setPlanningTime(120);
+  move_group_interface.setPlanningTime(10);
   // move_group_interface.setPlannerId("RRTstarkConfigDefault");
-  move_group_interface.setPlannerId("RRTConnectkConfigDefault");
-  // move_group_interface.setPlannerId("PRMstarkConfigDefault");
+  // move_group_interface.setPlannerId("RRTConnectkConfigDefault");
+  // move_group_interface.setPlannerId("PRMkConfigDefault");
+  move_group_interface.setPlannerId("PRMstarkConfigDefault");
 
   char ans;
 
@@ -192,8 +193,8 @@ int main(int argc, char* argv[])
     ocm.weight = 1.0;
     moveit_msgs::msg::Constraints test_constraints;
     test_constraints.orientation_constraints.push_back(ocm);
-    // move_group_interface.setPlanningTime(200);
-    // move_group_interface.setPathConstraints(test_constraints); // <-- uncomment for orientation constraint
+    move_group_interface.setPlanningTime(180);
+    move_group_interface.setPathConstraints(test_constraints); // <-- (un)comment for orientation constraint
 
     move_group_interface.setStartStateToCurrentState();  //<-- it is usefull to update the start state to the current
                                                          // state
