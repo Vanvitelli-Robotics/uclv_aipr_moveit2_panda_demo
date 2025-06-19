@@ -82,7 +82,6 @@ int main(int argc, char* argv[])
 
   moveit::planning_interface::MoveGroupInterface move_group_interface(node, PLANNING_GROUP);
 
-  moveit::planning_interface::PlanningSceneInterface planning_scene_interface;
 
   /* Scelgo il planner da usare */
   move_group_interface.setPlanningTime(10);
@@ -152,12 +151,12 @@ int main(int argc, char* argv[])
 
   // obj to attach
   {
-    geometry_msgs::msg::PoseStamped pose;
-    pose.header.frame_id = WORLD_FRAME;
-    pose.pose.orientation.w = 1.0;
-    pose.pose.position.x = x1 + DX_0;
-    pose.pose.position.y = 0.0;
-    pose.pose.position.z = Table_DZ;
+    // geometry_msgs::msg::PoseStamped pose;
+    // pose.header.frame_id = WORLD_FRAME;
+    // pose.pose.orientation.w = 1.0;
+    // pose.pose.position.x = x1 + DX_0;
+    // pose.pose.position.y = 0.0;
+    // pose.pose.position.z = Table_DZ;
     // addBOX(planning_scene_interface, 0.02, 0.02, 0.22, pose, "attach_obj");
     std::vector<std::string> touch_links;
     touch_links.push_back("panda_rightfinger");
@@ -187,8 +186,8 @@ int main(int argc, char* argv[])
     ocm.orientation.y = q.y();
     ocm.orientation.z = q.z();
     ocm.orientation.w = q.w();
-    ocm.absolute_x_axis_tolerance = 20.0 * M_PI;
-    ocm.absolute_y_axis_tolerance = 20.0 * M_PI / 180.0;
+    ocm.absolute_x_axis_tolerance = 2.0 * M_PI;
+    ocm.absolute_y_axis_tolerance = 2.0 * M_PI / 180.0;
     ocm.absolute_z_axis_tolerance = 2.0 * M_PI / 180.0;
     ocm.weight = 1.0;
     moveit_msgs::msg::Constraints test_constraints;
